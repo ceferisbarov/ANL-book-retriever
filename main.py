@@ -57,7 +57,7 @@ def retrieve_images():
     while pno <= page_count:
         try:
             url = f'{base_url}bibid={bibid}&pno={pno}'
-            #save_images(url, images_directory, pno)
+            save_images(url, images_directory, pno)
             pno += 1
 
             success_count += 1
