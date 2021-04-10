@@ -26,7 +26,7 @@ def get_url_parameters(url):
     if start_vtls == -1:
         start_bibid = url.find('bibid')
         start_pno = url.find('&pno')
-        bibid = url[start_bibid+6:start_pno]
+        bibid = url[start_bibid + 6:start_pno]
     else:
         bibid = url[start_vtls + 4:]
 
@@ -48,7 +48,7 @@ def save_images(url, directory, pno):
     soup = BeautifulSoup(r.text, 'html.parser')
 
     images = soup.findAll('img')
-    
+
     download_images(images, directory, pno)
 
 
@@ -119,7 +119,7 @@ def download_images(images, directory, pno):
                 except UnicodeDecodeError:
 
                     # After checking above condition, Image Download start
-                    with open(f"{directory}/images{pno}-{i+1}.jpg", "wb+") as f:
+                    with open(f"{directory}/images{pno}-{i + 1}.jpg", "wb+") as f:
                         f.write(r)
 
                     if os.path.isfile(f"{directory}/images{pno}-{i}.jpg"):
