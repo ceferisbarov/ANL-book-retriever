@@ -26,6 +26,7 @@ folder_path = tk.StringVar()
 output_1_text = tk.StringVar(value='')
 output_2_text = tk.StringVar(value='')
 output_3_text = tk.StringVar(value='')
+output_ocr = StringVar()
 
 
 def browse_button():
@@ -57,7 +58,7 @@ def retrieve_images():
     while pno <= page_count:
         try:
             url = f'{base_url}bibid={bibid}&pno={pno}'
-            #save_images(url, images_directory, pno)
+            save_images(url, images_directory, pno)
             #           print(bibid, page_count, book_title)
             pno += 1
 
@@ -85,19 +86,16 @@ def OCR(choice, language):
         ocrmypdf.ocr(pdf_path, save_path, rotate_pages=True,
                      remove_background=True, language=language.get(), deskew=True, force_ocr=True)
 
-        lbl_output_2.config(fg='green')
-        output_2_text.set("OCR completed")
+        output_ocr.config(fg='green')
+        output_ocr.set("OCR completed")
 
     except Exception as e:
         print(e)
-        lbl_output_2.config(fg='red')
-        output_2_text.set("Failed to perform OCR")
-
-
+        lbl_output_ocr.config(fg='red')
+        output_ocr.set("Failed to perform OCR")
 
 def open_OCR_choice_window():
     OCR_choice_window = Toplevel(root)
-
     OCR_choice_window.title("OCR")
 
     lang_choices = ['aze', 'tur', 'eng', 'rus']
@@ -122,13 +120,11 @@ def open_OCR_choice_window():
     btn_save_original = tk.Checkbutton(master=frm_save_option, text='Keep the original PDF', variable=save_original, onvalue=1, offvalue=0, height=5, width=20)
     btn_save_original.grid(row=0, column=0)
 
-
     btn_OCR = tk.Button(master=frm_OCR, text='perform OCR', command = lambda: OCR(save_original, language))
     btn_OCR.grid(row=0, column=0)
 
-    output_ocr = StringVar()
-    lbl_question = tk.Label(master=frm_save_option, textvariable=output_ocr, fg='blue')
-    lbl_question.grid(row=1, column=0)
+    lbl_output_ocr = tk.Label(master=frm_save_option, textvariable=output_ocr, fg='blue')
+    lbl_output_ocr.grid(row=1, column=0)
 
 def convert_to_pdf(compress):
     """Converts images into a PDF file, which is saved in '~/book_title'."""
@@ -255,7 +251,7 @@ lbl_output_1.grid(row=4, column=0)
 # CONVERT FRAME
 # --------------------------------
 
-lbl_ocr = tk.Label(text="3. Convert the downloaded images to PDF.\n"
+lbl_ocr = tk.Label(text="3. Convert the downloaded images to PDF."
                         "(Don't select the COMPRESS option\nif your are going to perform OCR)",
                    master=frm_convert)
 lbl_ocr.grid(row=0, column=0)
@@ -263,23 +259,23 @@ lbl_ocr.grid(row=0, column=0)
 compress = BooleanVar()
 btn_compress = tk.Checkbutton(master=frm_convert, text='Compress', variable=compress,
                                    onvalue=1, offvalue=0, height=5, width=20)
-btn_compress.grid(row=0, column=0)
+btn_compress.grid(row=1, column=0)
 
 btn_convert_to_pdf = tk.Button(text='Convert to PDF', master=frm_convert, command=lambda : convert_to_pdf(compress.get()))
-btn_convert_to_pdf.grid(row=0, column=1)
+btn_convert_to_pdf.grid(row=1, column=1)
 
 lbl_output_3 = tk.Label(textvariable=output_3_text, master=frm_convert)
-lbl_output_3.grid(row=1, column=0)
+lbl_output_3.grid(row=2, column=0)
 
 lbl_pdf = tk.Label(text="4. Perform OCR on the PDF",
                    master=frm_convert)
-lbl_pdf.grid(row=2, column=0)
+lbl_pdf.grid(row=3, column=0)
 
 btn_ocr = tk.Button(text='OCR', master=frm_convert, command=open_OCR_choice_window)
-btn_ocr.grid(row=2, column=1)
+btn_ocr.grid(row=3, column=1)
 
 lbl_output_2 = tk.Label(textvariable=output_2_text, fg='blue', master=frm_convert)
-lbl_output_2.grid(row=3, column=0)
+lbl_output_2.grid(row=4, column=0)
 
 
 # --------------------------------
