@@ -26,7 +26,6 @@ folder_path = tk.StringVar()
 output_1_text = tk.StringVar(value='')
 output_2_text = tk.StringVar(value='')
 output_3_text = tk.StringVar(value='')
-output_ocr = StringVar()
 
 
 def browse_button():
@@ -58,8 +57,7 @@ def retrieve_images():
     while pno <= page_count:
         try:
             url = f'{base_url}bibid={bibid}&pno={pno}'
-            save_images(url, images_directory, pno)
-            #           print(bibid, page_count, book_title)
+            #save_images(url, images_directory, pno)
             pno += 1
 
             success_count += 1
@@ -86,13 +84,13 @@ def OCR(choice, language):
         ocrmypdf.ocr(pdf_path, save_path, rotate_pages=True,
                      remove_background=True, language=language.get(), deskew=True, force_ocr=True)
 
-        output_ocr.config(fg='green')
-        output_ocr.set("OCR completed")
+        lbl_output_2.config(fg='green')
+        output_2_text.set("OCR completed")
 
     except Exception as e:
         print(e)
-        lbl_output_ocr.config(fg='red')
-        output_ocr.set("Failed to perform OCR")
+        lbl_output_2.config(fg='red')
+        output_2_text.set("Failed to perform OCR")
 
 def open_OCR_choice_window():
     OCR_choice_window = Toplevel(root)
@@ -120,11 +118,8 @@ def open_OCR_choice_window():
     btn_save_original = tk.Checkbutton(master=frm_save_option, text='Keep the original PDF', variable=save_original, onvalue=1, offvalue=0, height=5, width=20)
     btn_save_original.grid(row=0, column=0)
 
-    btn_OCR = tk.Button(master=frm_OCR, text='perform OCR', command = lambda: OCR(save_original, language))
+    btn_OCR = tk.Button(master=frm_OCR, text='perform OCR', command = lambda: [OCR(save_original, language), OCR_choice_window.destroy()])
     btn_OCR.grid(row=0, column=0)
-
-    lbl_output_ocr = tk.Label(master=frm_save_option, textvariable=output_ocr, fg='blue')
-    lbl_output_ocr.grid(row=1, column=0)
 
 def convert_to_pdf(compress):
     """Converts images into a PDF file, which is saved in '~/book_title'."""
