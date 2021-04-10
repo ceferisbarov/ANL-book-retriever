@@ -2,10 +2,11 @@
 # TODO: expand for different libraries
 import tkinter as tk
 from tkinter import *
+import ocrmypdf
 from tkinter import filedialog
 
 import markdown
-from fpdf import FPDF
+import img2pdf
 from tkinterhtml import HtmlFrame
 
 from functions import *
@@ -51,7 +52,8 @@ def retrieve_images():
     while pno <= page_count:
         try:
             url = f'{base_url}bibid={bibid}&pno={pno}'
-            save_images(url, images_directory, pno)
+#            save_images(url, images_directory, pno)
+            print(bibid, page_count, book_title)
             pno += 1
 
             success_count += 1
@@ -66,14 +68,42 @@ def retrieve_images():
             lbl_output_1.config(fg='red')
         output_1_text.set(f"{success_count} pages out of {page_count} have been downloaded, {fail_count} failed")
 
+def OCR(choice):
+    if choice==True:
+        save_path = os.path.join(directory, f'{book_title}_ocr.pdf')
+    else:
+        save_path = os.path.join(directory, f'{book_title}.pdf')
+
+    pdf_path = os.path.join(directory, f'{book_title}.pdf')
+    ocrmypdf.ocr(pdf_path, save_path, rotate_pages=True,
+             remove_background=True, language="en", deskew=True, force_ocr=True)
+
+def open_OCR_choice_window():
+    OCR_choice_window = Toplevel(root)
+
+    OCR_choice_window.title("OCR")
+
+    frm_question = tk.Frame(master=OCR_choice_window)
+    frm_question.grid(row=0, column=0)
+
+    frm_choice = tk.Frame(master=OCR_choice_window)
+    frm_choice.grid(row=1, column=0)
+
+    lbl_question = tk.Label(master=frm_question, text='Do you want to keep the original PDF?')
+    lbl_question.grid(row=0, column=0)
+
+    btn_yes = tk.Button(master=frm_choice, text='Yes, keep it.', command=lambda : OCR(True))
+    btn_yes.grid(row=0, column=0)
+
+    btn_no = tk.Button(master=frm_choice, text='No, replace it.', command=lambda : OCR(False))
+    btn_no.grid(row=0, column=1)
 
 def convert_to_pdf():
     """Converts images into a PDF file, which is saved in '~/book_title'."""
     img_path = []
     global images_directory
     for file in os.listdir(images_directory):
-        if file.endswith(".jpg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(
-                ".PNG") or file.endswith(".jpeg") or file.endswith(".JPEG"):
+        if file.endswith(".jpg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(".PNG") or file.endswith(".jpeg") or file.endswith(".JPEG"):
             img_path.append(os.path.join(images_directory, file))
 
     if not img_path:
@@ -82,13 +112,8 @@ def convert_to_pdf():
         return 0
 
     try:
-        pdf = FPDF()
-        pdf.set_auto_page_break(0)
-
-        for image in img_path:
-            pdf.add_page()
-            pdf.image(image, x=None, y=None, w=210, h=297)
-        pdf.output(f"{directory}/{book_title}.pdf", "F")
+        with open(os.path.join(directory, f"{book_title}.pdf"), "wb") as f:
+            f.write(img2pdf.convert(img_path))
     except:
         lbl_output_2.config(fg='red')
         output_2_text.set("You need to install the JPG files first.")
@@ -191,8 +216,11 @@ lbl_output_1.grid(row=2, column=1)
 # CONVERT FRAME
 # --------------------------------
 
+btn_ocr = tk.Button(text='OCR', master=frm_convert, command=open_OCR_choice_window)
+btn_ocr.grid(row=0, column=0)
+
 btn_convert_to_pdf = tk.Button(text='Convert to PDF', master=frm_convert, command=convert_to_pdf)
-btn_convert_to_pdf.grid(row=0, column=1)
+btn_convert_to_pdf.grid(row=0, column=2)
 
 lbl_output_2 = tk.Label(textvariable=output_2_text, master=frm_convert)
 lbl_output_2.grid(row=1, column=1)

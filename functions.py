@@ -1,4 +1,5 @@
 import os
+import ocrmypdf
 
 import requests
 from bs4 import BeautifulSoup
@@ -22,14 +23,18 @@ def get_url_parameters(url):
     base_url = url[:start_bibid]
 
     start_vtls = url.find('vtls')
-    bibid = url[start_vtls + 4:]
+    if start_vtls == -1:
+        start_bibid = url.find('bibid')
+        start_pno = url.find('&pno')
+        bibid = url[start_bibid+6:start_pno]
+    else:
+        bibid = url[start_vtls + 4:]
 
     page_content = requests.get(url).text
     start_last_page_params = page_content.find('last_page_params')
     start_page_count = page_content.find('pno', start_last_page_params, start_last_page_params + 100)
     start_page_count_ending = page_content.find('";', start_last_page_params, start_last_page_params + 100)
     page_count = int(page_content[start_page_count + 4:start_page_count_ending])
-
     length = len('<h2 class="book-title font-f-book-reg">')
     start_book_title = page_content.find('<h2 class="book-title font-f-book-reg">')
     start_book_title_ending = page_content.find('</h2>')
