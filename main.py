@@ -1,7 +1,9 @@
 # TODO: create .exe file
 # TODO: expand for different libraries
+# TODO: test OCR functionality
 import tkinter as tk
 from tkinter import *
+import tesseract
 import ocrmypdf
 from tkinter import filedialog
 
@@ -52,8 +54,8 @@ def retrieve_images():
     while pno <= page_count:
         try:
             url = f'{base_url}bibid={bibid}&pno={pno}'
-#            save_images(url, images_directory, pno)
-            print(bibid, page_count, book_title)
+            save_images(url, images_directory, pno)
+            #           print(bibid, page_count, book_title)
             pno += 1
 
             success_count += 1
@@ -68,15 +70,17 @@ def retrieve_images():
             lbl_output_1.config(fg='red')
         output_1_text.set(f"{success_count} pages out of {page_count} have been downloaded, {fail_count} failed")
 
+
 def OCR(choice):
-    if choice==True:
+    if choice == True:
         save_path = os.path.join(directory, f'{book_title}_ocr.pdf')
     else:
         save_path = os.path.join(directory, f'{book_title}.pdf')
 
     pdf_path = os.path.join(directory, f'{book_title}.pdf')
     ocrmypdf.ocr(pdf_path, save_path, rotate_pages=True,
-             remove_background=True, language="en", deskew=True, force_ocr=True)
+                 remove_background=True, language="en", deskew=True, force_ocr=True)
+
 
 def open_OCR_choice_window():
     OCR_choice_window = Toplevel(root)
@@ -92,18 +96,20 @@ def open_OCR_choice_window():
     lbl_question = tk.Label(master=frm_question, text='Do you want to keep the original PDF?')
     lbl_question.grid(row=0, column=0)
 
-    btn_yes = tk.Button(master=frm_choice, text='Yes, keep it.', command=lambda : OCR(True))
+    btn_yes = tk.Button(master=frm_choice, text='Yes, keep it.', command=lambda: OCR(True))
     btn_yes.grid(row=0, column=0)
 
-    btn_no = tk.Button(master=frm_choice, text='No, replace it.', command=lambda : OCR(False))
+    btn_no = tk.Button(master=frm_choice, text='No, replace it.', command=lambda: OCR(False))
     btn_no.grid(row=0, column=1)
+
 
 def convert_to_pdf():
     """Converts images into a PDF file, which is saved in '~/book_title'."""
     img_path = []
     global images_directory
     for file in os.listdir(images_directory):
-        if file.endswith(".jpg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(".PNG") or file.endswith(".jpeg") or file.endswith(".JPEG"):
+        if file.endswith(".jpg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(
+                ".PNG") or file.endswith(".jpeg") or file.endswith(".JPEG"):
             img_path.append(os.path.join(images_directory, file))
 
     if not img_path:
