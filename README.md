@@ -5,14 +5,19 @@ Proqramı quraşdırmaq üçün bu repository-ni zip şəklində yükləməyiniz
 
 ## İstifadə
 Proqrama sadəcə iki şey daxil etməyiniz lazımdır:
-- Directory
-- URL
-
+- Directory: faylların yüklənəcəyi məkan.
+- URL: yükləmək istədiyiniz kitabın onlayn versiyasının hər-hansı bir səhifəsinin linki.  
+  
+Bundan sonra
+- kitabın bütün səhifələrini öz formatında (JPEG) yükləyə,
+- bu faylları PDF-ə çevirə,
+- əldə etdiyiniz PDF-i OCR edə bilərsiniz.
 ## Troubleshooting
 
 ## Töhfə
 Proqram ilə bağlı fikir və təkliflərinizi cefer.isbarov@gmail.com ünvanına göndərə bilərsiniz. Proqramda görmək istədiyiniz dəyişiklikləri GitHub üzərindən təklif edə bilərsiniz.
-
+  
+Dəyərli rəylərinə görə Naqi Məhəmmədzadəyə və Ərtoğrul Əlişbəyliyə təşəkkürlər.
 
 # Download books from Azerbaijan National Library (unofficial)
 
@@ -29,3 +34,5 @@ Pressing the retrieve button will create a new folder and save the downloaded JP
 
 ## Contribution
 You can send your comments and suggestions to cefer.isbarov@gmail.com, or do the work yourself, and create a pull request.
+  
+Thanks to Nagi Zadeh and Artoghrul Alishbayli for their valuable feedback.

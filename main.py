@@ -4,12 +4,12 @@
 # TODO: improve GUI
 import tkinter as tk
 from tkinter import *
-import pytesseract
-import ocrmypdf
 from tkinter import filedialog
+import ocrmypdf
 
-import markdown
 import img2pdf
+import markdown
+import natsort
 from tkinterhtml import HtmlFrame
 
 from functions import *
@@ -57,7 +57,8 @@ def retrieve_images():
     while pno <= page_count:
         try:
             url = f'{base_url}bibid={bibid}&pno={pno}'
-            save_images(url, images_directory, pno)
+            # save_images(url, images_directory, pno)
+            print(book_title, pno)
             pno += 1
 
             success_count += 1
@@ -92,6 +93,7 @@ def OCR(choice, language):
         lbl_output_2.config(fg='red')
         output_2_text.set("Failed to perform OCR")
 
+
 def open_OCR_choice_window():
     OCR_choice_window = Toplevel(root)
     OCR_choice_window.title("OCR")
@@ -101,7 +103,6 @@ def open_OCR_choice_window():
     language.set('aze')
 
     save_original = BooleanVar(root)
-
 
     frm_language = tk.Frame(master=OCR_choice_window)
     frm_language.grid(row=0, column=0)
@@ -115,11 +116,14 @@ def open_OCR_choice_window():
     btn_lang_choices = OptionMenu(frm_language, language, *lang_choices)
     btn_lang_choices.grid(row=0, column=0)
 
-    btn_save_original = tk.Checkbutton(master=frm_save_option, text='Keep the original PDF', variable=save_original, onvalue=1, offvalue=0, height=5, width=20)
+    btn_save_original = tk.Checkbutton(master=frm_save_option, text='Keep the original PDF', variable=save_original,
+                                       onvalue=1, offvalue=0, height=5, width=20)
     btn_save_original.grid(row=0, column=0)
 
-    btn_OCR = tk.Button(master=frm_OCR, text='perform OCR', command = lambda: [OCR(save_original, language), OCR_choice_window.destroy()])
+    btn_OCR = tk.Button(master=frm_OCR, text='perform OCR',
+                        command=lambda: [OCR(save_original, language), OCR_choice_window.destroy()])
     btn_OCR.grid(row=0, column=0)
+
 
 def convert_to_pdf(compress):
     """Converts images into a PDF file, which is saved in '~/book_title'."""
@@ -132,8 +136,15 @@ def convert_to_pdf(compress):
 
     if not img_path:
         lbl_output_3.config(fg='red')
-        output_3_text.set("You need to install the JPG files first.")
+        output_3_text.set("You need to install the images first.")
         return 0
+    try:
+        img_path = natsort.natsorted(img_path)
+
+    except:
+        output_3_text.print("Failed to sort the images.")
+        return 0
+
     if compress:
         try:
             pass
@@ -151,6 +162,7 @@ def convert_to_pdf(compress):
 
     lbl_output_3.config(fg='green')
     output_3_text.set("Converted to PDF")
+
 
 def open_about_window():
     """Opens About window, which displays README.md."""
@@ -253,10 +265,11 @@ lbl_ocr.grid(row=0, column=0)
 
 compress = BooleanVar()
 btn_compress = tk.Checkbutton(master=frm_convert, text='Compress', variable=compress,
-                                   onvalue=1, offvalue=0, height=5, width=20)
+                              onvalue=1, offvalue=0, height=5, width=20)
 btn_compress.grid(row=1, column=0)
 
-btn_convert_to_pdf = tk.Button(text='Convert to PDF', master=frm_convert, command=lambda : convert_to_pdf(compress.get()))
+btn_convert_to_pdf = tk.Button(text='Convert to PDF', master=frm_convert,
+                               command=lambda: convert_to_pdf(compress.get()))
 btn_convert_to_pdf.grid(row=1, column=1)
 
 lbl_output_3 = tk.Label(textvariable=output_3_text, master=frm_convert)
@@ -271,7 +284,6 @@ btn_ocr.grid(row=3, column=1)
 
 lbl_output_2 = tk.Label(textvariable=output_2_text, fg='blue', master=frm_convert)
 lbl_output_2.grid(row=4, column=0)
-
 
 # --------------------------------
 # HELP FRAME

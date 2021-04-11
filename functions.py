@@ -1,5 +1,4 @@
 import os
-import ocrmypdf
 
 import requests
 from bs4 import BeautifulSoup
@@ -119,7 +118,8 @@ def download_images(images, directory, pno):
                 except UnicodeDecodeError:
 
                     # After checking above condition, Image Download start
-                    with open(f"{directory}/images{pno}-{i + 1}.jpg", "wb+") as f:
+                    # TODO: not all images are JPG
+                    with open(f"{directory}/{pno}.jpg", "wb+") as f:
                         f.write(r)
 
                     if os.path.isfile(f"{directory}/images{pno}-{i}.jpg"):
