@@ -128,7 +128,14 @@ def open_OCR_choice_window():
 def convert_to_pdf(compress):
     """Converts images into a PDF file, which is saved in '~/book_title'."""
     img_path = []
+
+    # If download has not occured, takes browse button input as the directory
     global images_directory
+    if images_directory == '':
+        global directory
+        directory = os.path.join(ent_directory.get(), book_title)
+        images_directory = os.path.join(directory, 'images')
+
     for file in os.listdir(images_directory):
         if file.endswith(".jpg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(
                 ".PNG") or file.endswith(".jpeg") or file.endswith(".JPEG"):
@@ -187,10 +194,10 @@ def open_contact_window():
     contact_window.title("Contact")
 
     text = '''
-           Please direct your comments and suggestions to this email:  
-           cefer.isbarov@gmail.com  
-             
-           You can also open issues or create pull requests in this github repository:  
+           Please direct your comments and suggestions to this email:
+           cefer.isbarov@gmail.com
+
+           You can also open issues or create pull requests in this github repository:
            github.com/ceferisbarov/ANL-book-retriever/
            '''
     html_contact = markdown.markdown(text)
